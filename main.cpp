@@ -151,7 +151,9 @@ public:
             }
             ret.merge(findWordsInPhrase(chars));
             vector<char> diagChars;
-            for(int r = 0, c = col; getIndex(r, c) < board.size(); r++, c++) {
+            //we don't need to get the diagnal of the zeroth column, because
+            //it's the same as the zeroth row.
+            for(int r = 0, c = col; getIndex(r, c) < board.size() && col != 0; r++, c++) {
                 char value = board[getIndex(r, c)];
                 diagChars.push_back(value);
             }
