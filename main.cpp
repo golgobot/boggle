@@ -162,7 +162,6 @@ public:
 
     //use a single vector to represent our board
     vector<char> board;
-    unordered_set<char> alpha;
 private:
     int size;
     int getRow(int index) {
