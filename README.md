@@ -1,6 +1,6 @@
 ## Compiling
 ```bash
-g++ main.cpp -o boggle
+g++ -std=c++17 main.cpp -o boggle
 ```
 
 ## Running

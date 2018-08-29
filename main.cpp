@@ -59,7 +59,7 @@ TrieNode* createTrie() {
 
 class BoggleBoard {
 public:
-    BoggleBoard(int size): size(size), board(size * size) {
+    BoggleBoard(int size, TrieNode* root): size(size), root(root), board(size * size) {
         srand(time(0));
         string alphaString = "qwertyuiopasdfghjklzxcvbnm";
         //randomly generate our board
@@ -81,8 +81,8 @@ public:
     /**
      * Uses a trie to find all valid words in a phrase
      */
-    vector<string> findWordsInPhrase(const vector<char>& chars, TrieNode* root) {
-        vector<string> ret;
+    unordered_set<string> findWordsInPhrase(const vector<char>& chars) {
+        unordered_set<string> ret;
         unordered_set<TrieNode*> nodes;
         //always have root
         nodes.insert(root);
@@ -110,7 +110,7 @@ public:
                 //if we're adding this node and this node is a word
                 //then add this to our return list
                 if(node->is_word) {
-                    ret.push_back(node->get_word());
+                    ret.insert(node->get_word());
                 }
                 nodes.insert(*it);
             }
@@ -121,8 +121,8 @@ public:
         return ret;
     }
 
-    vector<vector<string>> findAllWords(TrieNode* root) {
-        vector<vector<string>> ret;
+    unordered_set<string> findAllWords() {
+        unordered_set<string> ret;
         //for each row create phrases that are
         //a: that row
         //b: the diagonal of that row
@@ -132,13 +132,13 @@ public:
                 char value = board[getIndex(row, col)];
                 chars.push_back(value);
             }
-            ret.push_back(findWordsInPhrase(chars, root));
+            ret.merge(findWordsInPhrase(chars));
             vector<char> diagChars;
             for(int r = row, c = 0; getIndex(r, c) < board.size(); r++, c++) {
                 char value = board[getIndex(r, c)];
                 diagChars.push_back(value);
             }
-            ret.push_back(findWordsInPhrase(diagChars, root));
+            ret.merge(findWordsInPhrase(diagChars));
         }
         //for each column create phrases that are
         //a: that column
@@ -149,21 +149,22 @@ public:
                 char value = board[getIndex(row, col)];
                 chars.push_back(value);
             }
-            ret.push_back(findWordsInPhrase(chars, root));
+            ret.merge(findWordsInPhrase(chars));
             vector<char> diagChars;
             for(int r = 0, c = col; getIndex(r, c) < board.size(); r++, c++) {
                 char value = board[getIndex(r, c)];
                 diagChars.push_back(value);
             }
-            ret.push_back(findWordsInPhrase(diagChars, root));
+            ret.merge(findWordsInPhrase(diagChars));
         }
         return ret;
     }
 
     //use a single vector to represent our board
-    vector<char> board;
 private:
     int size;
+    TrieNode* root;
+    vector<char> board;
     int getRow(int index) {
         return static_cast<int>(index / size);
     }
@@ -177,13 +178,11 @@ private:
 
 int main() {
     TrieNode* root = createTrie();
-    BoggleBoard b(10);
+    BoggleBoard b(10, root);
     b.print();
-    auto wordLists = b.findAllWords(root);
-    for(auto words : wordLists) {
-        for(string word : words) {
-            cout << word << " ";
-        }
+    auto wordLists = b.findAllWords();
+    for(auto word : wordLists) {
+        cout << word << " ";
     }
     cout << endl;
     return 0;
