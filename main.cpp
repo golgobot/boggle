@@ -87,22 +87,17 @@ public:
         //always have root
         nodes.insert(root);
         for(char value : chars) {
-            //create sets of nodes to add and delete from our node set
-            unordered_set<TrieNode*> del;
+            //create sets of nodes to add
             unordered_set<TrieNode*> add;
             //go through each node in our set and check if the current
             //character is a child
-            for(auto it = nodes.begin(); it != nodes.end(); ++it) {
-                TrieNode* node = *it;
+            while(!nodes.empty()) {
+                TrieNode* node = *nodes.begin();
                 if(node->children.count(value) > 0) {
                     TrieNode* child = node->children[value];
                     add.insert(child);
                 }
-                del.insert(node);
-            }
-            //delete these nodes first
-            for(auto it = del.begin(); it != del.end(); ++it) {
-                nodes.erase(*it);
+                nodes.erase(node);                
             }
             //add nodes
             for(auto it = add.begin(); it != add.end(); ++it) {
